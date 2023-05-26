@@ -102,7 +102,7 @@ const u$perkawinan = defineStore({
       series: [
         {
           name: "Populasi",
-          color: "#006329",
+          color: "#19B6CF",
           data: [
             state.populasi.total,
             state.populasi.jantan,

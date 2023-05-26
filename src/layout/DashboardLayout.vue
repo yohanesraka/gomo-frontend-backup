@@ -62,6 +62,12 @@
           />
           <sidebar-item
             :link="{
+              name: 'Data Produksi Susu',
+              path: '/monitoring/data-produksi',
+            }"
+          />
+          <sidebar-item
+            :link="{
               name: 'Data Kandang',
               path: '/monitoring/data-kandang',
             }"
@@ -108,6 +114,12 @@
           />
           <sidebar-item
             :link="{
+              name: 'Pemerahan',
+              path: '/fase/pemerahan',
+            }"
+          />
+          <sidebar-item
+            :link="{
               name: 'Lepas Sapih',
               path: '/fase/lepas-sapih',
             }"
@@ -118,19 +130,19 @@
         <!-- Lembar kerja -->
         <sidebar-item v-if="userInfo.role !== 'bod'"
           :link="{
-            name: 'Lembar Kerja',
-            icon: 'fas fa-users text-success',
+            name: 'Proyeksi',
+            icon: 'fas fa-chart-bar text-success',
           }"
         >
           <sidebar-item
             :link="{
-              name: 'Pemeliharaan',
+              name: 'Produksi Susu',
               path: '/lembar-kerja/pemeliharaan',
             }"
           />
           <sidebar-item
             :link="{
-              name: 'Penanganan Penyakit',
+              name: 'Fase Kambing',
               path: '/lembar-kerja/penanganan-penyakit',
             }"
           />

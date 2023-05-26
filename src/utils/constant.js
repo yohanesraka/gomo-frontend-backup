@@ -1,6 +1,6 @@
 //const host = import.meta.env.VITE_BASE_API_URL;
-const host = "https://9c33-36-73-87-24.ngrok-free.app/";
-// const host = "http://localhost:51009";
+// const host = "https://2d66-182-4-100-48.ngrok-free.app/";
+const host = "http://localhost:51001";
 // const host = "https://be.gembala.sembadafarm.com";
 
 const baseApiUrl = `${host}/`;

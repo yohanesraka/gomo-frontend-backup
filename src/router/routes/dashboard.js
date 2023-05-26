@@ -98,6 +98,18 @@ const dashboardRoutes = [
         path: "data-perkawinan",
         name: "Data Perkawinan",
         component: () => import("@/views/Dashboard/Monitoring/KawinPage.vue"),
+        meta: { requiresAuth: true },  
+      },
+      {
+        path: "data-produksi",
+        name: "Data Produksi Susu",
+        component: () => import("@/views/Dashboard/Monitoring/ProduksiMilkingPage.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "data-produksi/grafik-produksi",
+        name: "Grafik Produksi Susu",
+        component: () => import("@/views/Dashboard/Monitoring/ProduksiGrafikPage.vue"),
         meta: { requiresAuth: true },
       },
       {
@@ -252,6 +264,34 @@ const dashboardRoutes = [
         meta: { requiresAuth: true },
       },
       {
+        path: "pemerahan",
+        name: "Summary Pemerahan",
+        component: () =>
+          import("@/views/Dashboard/Fase/Pemerahan/SummaryPemerahan.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "pemerahan/data-pemerahan",
+        name: "Fase Pemerahan",
+        component: () =>
+          import("@/views/Dashboard/Fase/Pemerahan/Pemerahan.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "pemerahan/sedang-laktasi",
+        name: "Sedang Laktasi",
+        component: () =>
+          import("@/views/Dashboard/Fase/Pemerahan/SedangLaktasi.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "pemerahan/langkah-kerja",
+        name: "Langkah Kerja Pemerahan",
+        component: () =>
+          import("@/views/Dashboard/Fase/Pemerahan/LK_Pemerahan.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
         path: "kelahiran",
         name: "Summary Kelahiran",
         component: () =>
@@ -312,7 +352,7 @@ const dashboardRoutes = [
         path: "pemeliharaan",
         name: "Lembar Kerja Pemeliharaan",
         component: () =>
-          import("@/views/Dashboard/LembarKerja/Pemeliharaan.vue"),
+          import("@/views/Dashboard/Proyeksi/ProyeksiSusu.vue"),
         meta: { requiresAuth: true },
       },
       {

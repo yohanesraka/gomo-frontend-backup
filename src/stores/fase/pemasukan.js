@@ -66,7 +66,7 @@ const u$pemasukan = defineStore({
       series: [
         {
           name: "Populasi",
-          color: "#006329",
+          color: "#19B6CF",
           data: [
             state.populasiThisMonth.total,
             state.populasiThisMonth.total_jantan,

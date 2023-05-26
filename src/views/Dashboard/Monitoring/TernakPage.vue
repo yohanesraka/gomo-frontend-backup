@@ -483,8 +483,8 @@ export default {
                   >
                     <base-input
                       v-bind="field"
-                      placeholder="RFID dari kalung domba"
-                      label="RFID"
+                      placeholder="ID Kambing Perah"
+                      label="ID Kambing"
                       required
                     ></base-input>
                   </field-form>
@@ -720,8 +720,8 @@ export default {
                   >
                     <base-input
                       v-bind="field"
-                      placeholder="RFID dari kalung domba"
-                      label="RFID"
+                      placeholder="ID Kambing Perah"
+                      label="ID Kambing"
                       required
                     ></base-input>
                   </field-form>
@@ -1004,7 +1004,7 @@ export default {
                 <!-- RFID -->
                 <div class="row">
                   <div class="col-5">
-                    <span style="font-weight: 600">RFID</span>
+                    <span style="font-weight: 600">ID Kambing</span>
                   </div>
                   <div class="col">
                     :

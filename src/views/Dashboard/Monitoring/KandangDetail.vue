@@ -147,7 +147,7 @@ export default {
             <!-- RFID -->
             <div class="row">
               <div class="col-5">
-                <span style="font-weight: 600">RFID</span>
+                <span style="font-weight: 600">ID Kambing</span>
               </div>
               <div class="col">
                 :
