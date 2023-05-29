@@ -2,7 +2,7 @@
 import { mapActions, mapState } from "pinia";
 import useAuthStore from "@/stores/auth";
 import d$kebuntingan from "@/stores/fase/kebuntingan";
-import HcBar from "@/components/HighCharts/Bar.vue";
+import HcAreaSpline from "@/components/HighCharts/AreaSpline.vue";
 
 // In your Vue.js component.
 
@@ -11,7 +11,7 @@ export default {
     title: "Grafik Produksi Susu",
   }),
   components: {
-    HcBar,
+    HcAreaSpline,
 
   },
   data: () => ({
@@ -122,12 +122,12 @@ export default {
                   class="text-success text-left ls-1 mb-4"
                   style="font-size: 16px"
                 >
-                  Populasi {{ pageTitle }}
+                {{ pageTitle }}
                 </h1>
               </div>
             </div>
-            <hc-bar
-              :height="215"
+            <hc-area-spline
+              :height="200"
               :data="g$byPopulasi"
               :data-labels="true"
               :legend="true"

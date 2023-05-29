@@ -352,7 +352,7 @@ const dashboardRoutes = [
         path: "pemeliharaan",
         name: "Lembar Kerja Pemeliharaan",
         component: () =>
-          import("@/views/Dashboard/Proyeksi/ProyeksiSusu.vue"),
+          import("@/views/Dashboard/LembarKerja/ProyeksiSusu.vue"),
         meta: { requiresAuth: true },
       },
       {
@@ -366,7 +366,7 @@ const dashboardRoutes = [
         path: "penanganan-penyakit",
         name: "Lembar Kerja Penanganan Penyakit",
         component: () =>
-          import("@/views/Dashboard/LembarKerja/PenangananPenyakit.vue"),
+          import("@/views/Dashboard/LembarKerja/FaseKambing.vue"),
         meta: { requiresAuth: true },
       },
       {
