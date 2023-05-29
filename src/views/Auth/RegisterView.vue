@@ -63,7 +63,7 @@ export default {
     <div class="row mx-0 justify-content-center">
       <div class="col-sm-8 mt--6">
         <div class="text-center mt-5 mb-5">
-          <img width="204" src="../../../public/images/GOMO LOGO.png" alt="email" />
+          <img width="204" src="../../../public/images/GOMOLOGO.png" alt="email" />
         </div>
         <div class="card bg-secondary shadow border-0">
           <h1 class="text-center display-4 pt-4">Daftar Akun Anda</h1>

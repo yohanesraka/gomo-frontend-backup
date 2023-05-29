@@ -55,7 +55,7 @@ export default {
           <div class="col-md-8 px-5">
             <!-- <h1 class="text-black">Selamat Datang di {{ siteMeta.title }}!</h1>
               <br /> -->
-            <img style="width: 204px" src="../../../public/images/GOMO LOGO.png" alt="" />
+            <img style="width: 204px" src="../../../public/images/GOMOLOGO.png" alt="" />
           </div>
         </div>
       </div>

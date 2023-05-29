@@ -8,7 +8,7 @@
       <div class="sidenav-header d-flex align-items-center">
         <router-link class="navbar-brand" :to="{ name: isLoggedIn ? 'Home' : 'Login' }">
           <div class="center-md-4 px-4">
-            <img style="width: 100px" src="../../../public/images/GOMO LOGO.png" alt="" />
+            <img style="width: 100px" src="../../../public/images/GOMOLOGO.png" alt="" />
           </div>
         </router-link>
         <div class="ml-auto">

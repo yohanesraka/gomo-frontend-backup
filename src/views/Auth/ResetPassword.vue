@@ -53,7 +53,7 @@ export default {
           <div class="card-header bg-transparent pb-5">
             <div class="text-center mt-2 mb-3">
               <strong>Lupa Password</strong><br /><br />
-              <img width="204" src="../../../public/images/GOMO LOGO.png" alt="email" />
+              <img width="204" src="../../../public/images/GOMOLOGO.png" alt="email" />
               <br />
               <br />
             </div>
