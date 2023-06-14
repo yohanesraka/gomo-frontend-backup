@@ -13,6 +13,8 @@ import "@/assets/vendor/flatpickr/monthStyle.css";
 
 import "bootstrap/dist/js/bootstrap.min";
 
+import 'v-calendar/style.css';
+
 export default {
   install(app) {
     app.use(SidebarPlugin);

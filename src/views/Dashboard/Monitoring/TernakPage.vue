@@ -49,6 +49,7 @@ export default {
         id: 1,
         name: "Pemasukan",
       },
+      status_perah: null,
       id_kandang: null,
       tanggal_keluar: null,
       status_keluar: null,
@@ -90,6 +91,10 @@ export default {
             status_ternak ? status_ternak.status_ternak : null,
         },
         {
+          name: "status_perah",
+          th: "Status Perah",
+        },
+        {
           name: "umur",
           th: "Umur",
         },
@@ -125,6 +130,7 @@ export default {
     ...mapState(d$dropdown, [
       "g$ddJenisKelamin",
       "g$ddBangsa",
+      "g$ddStatusPerah",
       "g$ddStatusSehat",
       "g$ddFasePemeliharaan",
       "g$ddStatusKeluar",
@@ -189,6 +195,7 @@ export default {
           id: 1,
           name: "Pemasukan",
         },
+        status_perah: null,
         kandang: null,
         tanggal_keluar: null,
         status_keluar: null,
@@ -211,6 +218,7 @@ export default {
           fase,
           kandang,
           status_ternak,
+          status_perah,
         } = this.input;
         const data = {
           rf_id,
@@ -221,20 +229,17 @@ export default {
           suhu,
           tanggal_lahir: tanggal_lahir ? tanggal_lahir : null,
           tanggal_masuk: tanggal_masuk ? tanggal_masuk : null,
+          status_perah: status_perah ? status_perah : null,
           id_dam: id_dam ? id_dam.id : null,
           id_sire: id_sire ? id_sire.id : null,
           id_fp: fase ? fase.id : null,
-          id_status_ternak: status_ternak
-            ? status_ternak.id_status_ternak
-            : null,
+          id_status_ternak: status_ternak ? status_ternak.id_status_ternak : null,
           id_kandang: kandang ? kandang.id : null,
         };
         await this.schema.validate(data);
         const tambahTernak = await this.a$ternakAdd(data);
         this.modal.addTernak = false;
-        this.notify(
-          `Ternak dengan ID Ternak ${tambahTernak.id} berhasil ditambahkan`
-        );
+        this.notify(`Ternak dengan ID Ternak ${tambahTernak.id} berhasil ditambahkan`);
       } catch (error) {
         this.notify(error, false);
       } finally {
@@ -259,6 +264,7 @@ export default {
           id_sire,
           fase,
           status_ternak,
+          status_perah,
           kandang,
         } = this.input;
         const data = {
@@ -271,12 +277,11 @@ export default {
           suhu,
           tanggal_lahir: tanggal_lahir ? tanggal_lahir : null,
           tanggal_masuk: tanggal_masuk ? tanggal_masuk : null,
+          status_perah: status_perah ? status_perah : null,
           id_dam: id_dam ? id_dam.id : null,
           id_sire: id_sire ? id_sire.id : null,
           id_fp: fase ? fase.id : null,
-          id_status_ternak: status_ternak
-            ? status_ternak.id_status_ternak
-            : null,
+          id_status_ternak: status_ternak ? status_ternak.id_status_ternak : null,
           id_kandang: kandang ? kandang.id : null,
         };
         await this.schema.validate(data);
@@ -301,9 +306,7 @@ export default {
         };
         const deleteTernak = await this.a$ternakDelete(data);
         this.modal.confirm = false;
-        this.notify(
-          `Ternak dengan ID Ternak ${deleteTernak.id} berhasil dihapus`
-        );
+        this.notify(`Ternak dengan ID Ternak ${deleteTernak.id} berhasil dihapus`);
       } catch (error) {
         this.notify(error, false);
       } finally {
@@ -315,9 +318,7 @@ export default {
       this.loadingModal = true;
       this.modal.addTernak = true;
       await this.a$ddBangsa().catch((error) => this.notify(error, false));
-      await this.a$ddFasePemeliharaan().catch((error) =>
-        this.notify(error, false)
-      );
+      await this.a$ddFasePemeliharaan().catch((error) => this.notify(error, false));
       await this.a$ddKandang().catch((error) => this.notify(error, false));
       await this.a$ddListBetina().catch((error) => this.notify(error, false));
       await this.a$ddListPejantan().catch((error) => this.notify(error, false));
@@ -328,9 +329,7 @@ export default {
       this.modal.ubahTernak = true;
       this.loadingModal = true;
       await this.a$ddBangsa().catch((error) => this.notify(error, false));
-      await this.a$ddFasePemeliharaan().catch((error) =>
-        this.notify(error, false)
-      );
+      await this.a$ddFasePemeliharaan().catch((error) => this.notify(error, false));
       await this.a$ddKandang().catch((error) => this.notify(error, false));
       await this.a$ddListBetina().catch((error) => this.notify(error, false));
       await this.a$ddListPejantan().catch((error) => this.notify(error, false));
@@ -351,6 +350,7 @@ export default {
         fase,
         kandang,
         tanggal_keluar,
+        status_perah,
         status_keluar,
         status_ternak,
       } = row;
@@ -387,12 +387,10 @@ export default {
           name: fase ? fase.fase : null,
         },
         status_ternak: {
-          id_status_ternak: status_ternak
-            ? status_ternak.id_status_ternak
-            : null,
+          id_status_ternak: status_ternak ? status_ternak.id_status_ternak : null,
           status_ternak: status_ternak ? status_ternak.status_ternak : null,
         },
-
+        status_perah,
         tanggal_keluar,
         status_keluar,
         image,
@@ -492,11 +490,7 @@ export default {
 
                 <!-- Berat -->
                 <div class="col-6">
-                  <field-form
-                    v-slot="{ field }"
-                    v-model="input.berat"
-                    name="berat"
-                  >
+                  <field-form v-slot="{ field }" v-model="input.berat" name="berat">
                     <base-input
                       v-bind="field"
                       placeholder="Masukan berat"
@@ -508,11 +502,7 @@ export default {
 
                 <!-- suhu -->
                 <div class="col-6">
-                  <field-form
-                    v-slot="{ field }"
-                    v-model="input.suhu"
-                    name="suhu_berkala"
-                  >
+                  <field-form v-slot="{ field }" v-model="input.suhu" name="suhu_berkala">
                     <base-input
                       v-bind="field"
                       placeholder="Masukan suhu"
@@ -572,7 +562,7 @@ export default {
                       :options="g$ddListPejantan"
                       label="name"
                       track-by="id"
-                      placeholder="Pilih ID sire (bapak) dari domba"
+                      placeholder="Pilih ID sire (bapak) dari kambing"
                       :show-labels="false"
                     />
                   </base-input>
@@ -586,7 +576,7 @@ export default {
                       :options="g$ddListBetina"
                       label="name"
                       track-by="id"
-                      placeholder="Pilih ID dam (ibu) dari domba"
+                      placeholder="Pilih ID dam (ibu) dari kambing"
                       :show-labels="false"
                     />
                   </base-input>
@@ -651,6 +641,18 @@ export default {
                   </base-input>
                 </div>
 
+                <!-- Status Perah -->
+                <div class="col-6">
+                  <base-input name="status_perah" label="Status Perah">
+                    <multi-select
+                      v-model="input.status_perah"
+                      :options="g$ddStatusPerah"
+                      placeholder="Pilih Status Perah"
+                      :show-labels="false"
+                    />
+                  </base-input>
+                </div>
+
                 <!-- Image-->
                 <!-- <div class="col-6" v-if="!this.input.image">
                   <div class="form-group has-label">
@@ -699,9 +701,7 @@ export default {
       <!-- Edit Modal -->
       <modal-comp v-model:show="modal.ubahTernak" modal-classes="modal-lg">
         <template #header>
-          <h3 class="modal-title">
-            Detail {{ pageTitle }} Nomor {{ input.id_ternak }}
-          </h3>
+          <h3 class="modal-title">Detail {{ pageTitle }} Nomor {{ input.id_ternak }}</h3>
         </template>
         <template #body>
           <div v-if="loadingModal">
@@ -729,11 +729,7 @@ export default {
 
                 <!-- Berat -->
                 <div class="col-6">
-                  <field-form
-                    v-slot="{ field }"
-                    v-model="input.berat"
-                    name="berat"
-                  >
+                  <field-form v-slot="{ field }" v-model="input.berat" name="berat">
                     <base-input
                       v-bind="field"
                       placeholder="Berat"
@@ -745,11 +741,7 @@ export default {
 
                 <!-- Suhu -->
                 <div class="col-6">
-                  <field-form
-                    v-slot="{ field }"
-                    v-model="input.suhu"
-                    name="suhu"
-                  >
+                  <field-form v-slot="{ field }" v-model="input.suhu" name="suhu">
                     <base-input
                       v-bind="field"
                       placeholder="Suhu"
@@ -809,7 +801,7 @@ export default {
                       :options="g$ddListPejantan"
                       label="name"
                       track-by="id"
-                      placeholder="Pilih ID sire (bapak) dari domba"
+                      placeholder="Pilih ID sire (bapak) dari Kambing"
                       :show-labels="false"
                     />
                   </base-input>
@@ -823,7 +815,7 @@ export default {
                       :options="g$ddListBetina"
                       label="name"
                       track-by="id"
-                      placeholder="Pilih ID dam (ibu) dari domba"
+                      placeholder="Pilih ID dam (ibu) dari kambing"
                       :show-labels="false"
                     />
                   </base-input>
@@ -892,6 +884,18 @@ export default {
                   </base-input>
                 </div>
 
+                <!-- Status Perah -->
+                <div class="col-6">
+                  <base-input name="status_perah" label="Status Perah">
+                    <multi-select
+                      v-model="input.status_perah"
+                      :options="g$ddStatusPerah"
+                      placeholder="Pilih Status Perah"
+                      :show-labels="false"
+                    />
+                  </base-input>
+                </div>
+
                 <!-- Image-->
                 <!-- <div class="col-6" v-if="!this.input.image">
                   <div class="form-group has-label">
@@ -940,9 +944,7 @@ export default {
       <!-- delete modal -->
       <modal-comp v-model:show="modal.confirm" modal-classes="modal-md">
         <template #header>
-          <h3 class="modal-title">
-            Hapus {{ pageTitle }} Nomor {{ input.id_ternak }}
-          </h3>
+          <h3 class="modal-title">Hapus {{ pageTitle }} Nomor {{ input.id_ternak }}</h3>
         </template>
         <template #body>
           <div class="col-12">
@@ -978,16 +980,12 @@ export default {
       <!-- Modal Detail Ternak -->
       <modal-comp v-model:show="modal.detailTernak" modal-classes="modal-md">
         <template #header>
-          <h3 class="modal-title">
-            Detail Ternak Nomor {{ infoTernak.id_ternak }}
-          </h3>
+          <h3 class="modal-title">Detail Ternak Nomor {{ infoTernak.id_ternak }}</h3>
         </template>
         <template v-if="modal.detailTernak" #body>
           <tabs>
             <tab-pane title="Detail">
-              <div
-                style="max-height: 450px; overflow-y: auto; overflow-x: hidden"
-              >
+              <div style="max-height: 450px; overflow-y: auto; overflow-x: hidden">
                 <div class="row">
                   <!-- ID Ternak -->
                   <div class="col-5">
@@ -995,9 +993,7 @@ export default {
                   </div>
                   <div class="col">
                     :
-                    <span style="font-weight: 300">
-                      {{ infoTernak.id_ternak }}</span
-                    >
+                    <span style="font-weight: 300"> {{ infoTernak.id_ternak }}</span>
                   </div>
                 </div>
 
@@ -1008,9 +1004,7 @@ export default {
                   </div>
                   <div class="col">
                     :
-                    <span style="font-weight: 300">
-                      {{ infoTernak.rf_id }}</span
-                    >
+                    <span style="font-weight: 300"> {{ infoTernak.rf_id }}</span>
                   </div>
                 </div>
 
@@ -1022,9 +1016,7 @@ export default {
                   <div class="col">
                     :
                     <span style="font-weight: 300">
-                      {{
-                        infoTernak.bangsa ? infoTernak.bangsa.bangsa : "---"
-                      }}</span
+                      {{ infoTernak.bangsa ? infoTernak.bangsa.bangsa : "---" }}</span
                     >
                   </div>
                 </div>
@@ -1038,9 +1030,7 @@ export default {
                     :
                     <span style="font-weight: 300">
                       {{
-                        infoTernak.jenis_kelamin
-                          ? infoTernak.jenis_kelamin
-                          : "---"
+                        infoTernak.jenis_kelamin ? infoTernak.jenis_kelamin : "---"
                       }}</span
                     >
                   </div>
@@ -1111,9 +1101,7 @@ export default {
                     :
                     <span style="font-weight: 300">
                       {{
-                        infoTernak.kandang
-                          ? infoTernak.kandang.kode_kandang
-                          : "---"
+                        infoTernak.kandang ? infoTernak.kandang.kode_kandang : "---"
                       }}</span
                     >
                   </div>
@@ -1224,14 +1212,9 @@ export default {
               </div>
             </tab-pane>
             <tab-pane title="Kesehatan">
-             <div
-                style="max-height: 500px; overflow-y: 800px; overflow-x: hidden"
-              >
+              <div style="max-height: 500px; overflow-y: 800px; overflow-x: hidden">
                 <h3 class="my-3">Riwayat Kesehatan</h3>
-                <empty-result
-                  v-if="!g$riwayatKesehatan.length"
-                  :text="`Kesehatan`"
-                />
+                <empty-result v-if="!g$riwayatKesehatan.length" :text="`Kesehatan`" />
                 <div class="m-3" v-for="item in g$riwayatKesehatan" :key="item">
                   <hr class="m-0" />
                   <div class="row">
@@ -1250,9 +1233,7 @@ export default {
                     <div class="col">
                       :
                       <span style="font-weight: 200">{{
-                        item.tanggal_sakit
-                          ? ubahTanggal(item.tanggal_sakit)
-                          : "-"
+                        item.tanggal_sakit ? ubahTanggal(item.tanggal_sakit) : "-"
                       }}</span>
                     </div>
                   </div>
@@ -1263,9 +1244,7 @@ export default {
                     <div class="col">
                       :
                       <span style="font-weight: 200">{{
-                        item.tanggal_sembuh
-                          ? ubahTanggal(item.tanggal_sakit)
-                          : "-"
+                        item.tanggal_sembuh ? ubahTanggal(item.tanggal_sakit) : "-"
                       }}</span>
                     </div>
                   </div>
@@ -1275,7 +1254,7 @@ export default {
             <tab-pane title="Perlakuan">
               <h3 class="my-3">Perlakuan yang telah diberikan</h3>
               <empty-result v-if="!g$perlakuan.length" :text="`Perlakuan`" />
-               <div v-for="(key, index) in g$perlakuan" :key="key">
+              <div v-for="(key, index) in g$perlakuan" :key="key">
                 <hr class="m-0" />
                 <div class="row">
                   <div class="col-7">

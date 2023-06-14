@@ -112,12 +112,7 @@
               path: '/fase/kelahiran',
             }"
           />
-          <sidebar-item
-            :link="{
-              name: 'Pemerahan',
-              path: '/fase/pemerahan',
-            }"
-          />
+
           <sidebar-item
             :link="{
               name: 'Lepas Sapih',
@@ -128,7 +123,8 @@
         <div class="dropdown-divider" />
 
         <!-- Lembar kerja -->
-        <sidebar-item v-if="userInfo.role !== 'bod'"
+        <sidebar-item
+          v-if="userInfo.role !== 'bod'"
           :link="{
             name: 'Proyeksi',
             icon: 'fas fa-chart-bar text-success',

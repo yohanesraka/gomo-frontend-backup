@@ -1,7 +1,7 @@
 import { baseApi } from "@/services/api";
 import { subApiUrl } from "@/utils/constant";
 
-const { api, ternak, timbangan } = subApiUrl;
+const { api, ternak, timbangan, produksi, exports } = subApiUrl;
 
 const list = () => baseApi.get(`${api}/${ternak}`);
 const add = (req) => baseApi.post(`${api}/${ternak}`, req);
@@ -25,6 +25,11 @@ const listPejantan = () => baseApi.get(`${api}/${ternak}/pejantan`);
 const listTimbangan = (req) =>
   baseApi.get(`${api}/${timbangan}?id_ternak=${req}`);
 
+const listTotal = () => baseApi.get(`${api}/${produksi}/total`);
+const addSusu = (req) => baseApi.post(`${api}/${produksi}`, req);  
+const listSusu = (req) => baseApi.get(`${api}/${produksi}/${req}`);
+const exportEx = () => baseApi.get(`${api}/${exports}`);
+
 export {
   listBetina,
   listPejantan,
@@ -37,4 +42,8 @@ export {
   listTimbangan,
   statusTernak,
   listPerlakuan,
+  listSusu,
+  addSusu,
+  listTotal,
+  exportEx
 };

@@ -54,7 +54,7 @@ export default {
     },
   }),
   computed: {
-    ...mapState(d$ternak, ["g$produksiSusuTotal", "g$produksiSusuTotalTabel"]),
+    ...mapState(d$ternak, ["g$produksiSusuTotal", "g$produksiSusuTotalTabelBulanan"]),
   },
   watch: {
     modals(val) {
@@ -126,7 +126,7 @@ export default {
             </div>
             <hc-area-spline
               :height="200"
-              :data="g$produksiSusuTotalTabel"
+              :data="g$produksiSusuTotalTabelBulanan"
               :data-labels="true"
               :legend="true"
             />

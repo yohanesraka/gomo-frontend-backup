@@ -181,9 +181,14 @@ const u$dashboard = defineStore({
       categories: [...state.categoriesAdgCempe],
       series: [
         {
-          name: "Bobot",
+          name: "Produksi",
           data: state.totalAdgCempe.map(({ average }) => average),
           color: "#006329",
+        },
+        {
+          name: "Target Peternak",
+          data: state.totalAdgCempe.map(({ average }) => average),
+          color: "#a86632",
         },
       ],
     }),

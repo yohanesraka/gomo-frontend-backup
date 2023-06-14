@@ -17,7 +17,7 @@ export default {
     };
   },
   data: () => ({
-    pageTitle: "Data Domba Indukan",
+    pageTitle: "Data Kambing Indukan",
     // Input
     input: {
       id: null,
@@ -42,22 +42,23 @@ export default {
         {
           name: "bangsa",
           th: "Bangsa",
-          render: ({ bangsa }) => bangsa ? bangsa.bangsa : null,
+          render: ({ bangsa }) => (bangsa ? bangsa.bangsa : null),
         },
         {
           name: "kode_kandang",
           th: "Kode Kandang",
-          render: ({ kandang }) => kandang ? kandang.kode_kandang : null,
+          render: ({ kandang }) => (kandang ? kandang.kode_kandang : null),
         },
         {
           name: "fase",
           th: "Fase Pemeliharaan",
-          render: ({ fase }) => fase ? fase.fase : null,
+          render: ({ fase }) => (fase ? fase.fase : null),
         },
         {
           name: "status",
           th: "Status",
-          render: ({ status_ternak }) => status_ternak ? status_ternak.status_ternak : null,
+          render: ({ status_ternak }) =>
+            status_ternak ? status_ternak.status_ternak : null,
         },
         {
           name: "totalPerkawinan",
@@ -108,9 +109,7 @@ export default {
     },
   },
   async mounted() {
-    await this.a$betinaList('').catch((error) =>
-      this.notify(error, false)
-    );
+    await this.a$betinaList("").catch((error) => this.notify(error, false));
   },
   methods: {
     ...mapActions(d$kawin, ["a$betinaList", "a$jantanList"]),
@@ -120,13 +119,13 @@ export default {
       };
     },
     async triggerDetail(row) {
-        const { id_ternak } = row;
-        router.push({
-          name: "Detail Kawin",
-          params: {
-            id: id_ternak,
-          },
-        });
+      const { id_ternak } = row;
+      router.push({
+        name: "Detail Kawin",
+        params: {
+          id: id_ternak,
+        },
+      });
     },
   },
 };
@@ -205,23 +204,58 @@ export default {
               <!-- Input select -->
               <!-- Input betina -->
               <div class="col-12">
-                <base-input name="id_ternak" placeholder="ID Indukan" label="ID Indukan" required>
-                  <multi-select v-model="input.id_ternak" :options="g$kawinList" label="id_ternak" track-by="id_ternak" placeholder="Pilih/Masukan ID Indukan Betina" :show-labels="false" />
+                <base-input
+                  name="id_ternak"
+                  placeholder="ID Indukan"
+                  label="ID Indukan"
+                  required
+                >
+                  <multi-select
+                    v-model="input.id_ternak"
+                    :options="g$kawinList"
+                    label="id_ternak"
+                    track-by="id_ternak"
+                    placeholder="Pilih/Masukan ID Indukan Betina"
+                    :show-labels="false"
+                  />
                 </base-input>
               </div>
               <!-- Input Pemacek -->
               <div class="col-12">
-                <base-input name="id_ternak" placeholder="ID Pemacek" label="ID Pemacek" required>
-                  <multi-select v-model="input.id_ternak" :options="g$ddListPejantan" label="name" track-by="id" placeholder="Pilih/Masukan ID Indukan Pejantan" :show-labels="false" />
+                <base-input
+                  name="id_ternak"
+                  placeholder="ID Pemacek"
+                  label="ID Pemacek"
+                  required
+                >
+                  <multi-select
+                    v-model="input.id_ternak"
+                    :options="g$ddListPejantan"
+                    label="name"
+                    track-by="id"
+                    placeholder="Pilih/Masukan ID Indukan Pejantan"
+                    :show-labels="false"
+                  />
                 </base-input>
               </div>
               <!-- Input kode kandang -->
               <div class="col-12">
-                <base-input name="id_kandang" placeholder="ID Kandang" label="ID Kandang" required>
-                  <multi-select v-model="input.id_kandang" :options="g$ddKandang" label="name" track-by="id" placeholder="Pilih/Masukan ID Kandang" :show-labels="false" />
+                <base-input
+                  name="id_kandang"
+                  placeholder="ID Kandang"
+                  label="ID Kandang"
+                  required
+                >
+                  <multi-select
+                    v-model="input.id_kandang"
+                    :options="g$ddKandang"
+                    label="name"
+                    track-by="id"
+                    placeholder="Pilih/Masukan ID Kandang"
+                    :show-labels="false"
+                  />
                 </base-input>
               </div>
-
             </div>
           </form-comp>
         </template>
@@ -326,7 +360,6 @@ export default {
           <base-button type="danger" @click="delKawin()">Hapus</base-button>
         </template>
       </modal-comp>
-
     </template>
   </main-layout>
 </template>

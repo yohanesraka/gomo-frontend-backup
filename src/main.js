@@ -2,9 +2,11 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { createMetaManager, plugin as metaPlugin } from "vue-meta";
 
+
 // theme & notification
 import theme from "@/plugins/theme";
 import Toast from "vue-toastification";
+import { Calendar } from 'v-calendar';
 
 // localization
 import { setLocale } from "yup";
@@ -34,5 +36,6 @@ app.use(router);
 app.use(theme);
 app.use(Toast, options);
 app.use(installAxios);
+app.use(Calendar);
 
 app.mount("#app");

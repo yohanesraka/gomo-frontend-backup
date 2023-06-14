@@ -113,6 +113,12 @@ const dashboardRoutes = [
         meta: { requiresAuth: true },
       },
       {
+        path: "data-produksi/grafik-bulanan",
+        name: "Grafik Produksi Susu Bulanan",
+        component: () => import("@/views/Dashboard/Monitoring/ProduksiGrafikPageBulanan.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
         path: "riwayat-kawin/:id",
         name: "Detail Kawin",
         component: () => import("@/views/Dashboard/Monitoring/KawinDetail.vue"),
@@ -261,34 +267,6 @@ const dashboardRoutes = [
         name: "Langkah Kerja Kebuntingan",
         component: () =>
           import("@/views/Dashboard/Fase/Kebuntingan/LK_Kebuntingan.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "pemerahan",
-        name: "Summary Pemerahan",
-        component: () =>
-          import("@/views/Dashboard/Fase/Pemerahan/SummaryPemerahan.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "pemerahan/data-pemerahan",
-        name: "Fase Pemerahan",
-        component: () =>
-          import("@/views/Dashboard/Fase/Pemerahan/Pemerahan.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "pemerahan/sedang-laktasi",
-        name: "Sedang Laktasi",
-        component: () =>
-          import("@/views/Dashboard/Fase/Pemerahan/SedangLaktasi.vue"),
-        meta: { requiresAuth: true },
-      },
-      {
-        path: "pemerahan/langkah-kerja",
-        name: "Langkah Kerja Pemerahan",
-        component: () =>
-          import("@/views/Dashboard/Fase/Pemerahan/LK_Pemerahan.vue"),
         meta: { requiresAuth: true },
       },
       {

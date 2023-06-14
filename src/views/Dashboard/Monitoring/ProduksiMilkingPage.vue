@@ -1,15 +1,15 @@
 <script>
 import { mapActions, mapState } from "pinia";
-import d$kawin from "@/stores/monitoring/kawin";
-import d$dropdown from "@/stores/dropdown";
-
+import d$ternak from "@/stores/monitoring/ternak";
 import { object as y$object, string as y$string, ref as y$ref } from "yup";
+import { ubahTanggal } from "@/utils/locale/ubahTanggal";
 import router from "../../../router";
 
 export default {
   metaInfo: () => ({
     title: "Data Produksi Susu",
   }),
+
   setup() {
     const schema = y$object({});
     return {
@@ -18,54 +18,43 @@ export default {
   },
   data: () => ({
     pageTitle: "Data Produksi  Susu",
-    // Input
-    input: {
-      id_produksi_susu: null,
-      tanggal_produksi: "",
-      total_pagi: "",
-      total_sore: "",
-      total_harian: "",
-    },
     // UI
     modal: {
-      addProduksi: false,
-      ubahProduksi: false,
       confirm: false,
     },
     // DataTable
     dt: {
       column: [
         {
-          name: "tanggal_produksi",
+          name: "date",
           th: "Tanggal Produksi",
-          render: ({ tanggalProduksi}) => {tanggalProduksi} ,
+          render: ({ date }) => `${ubahTanggal(date)}`,
         },
         {
-          name: "totalPopulasi",
+          name: "population",
           th: "Populasi Pemerahan",
-          render: ({ populasiPemerahan }) => {populasiPemerahan} ,
+          render: ({ population }) => `${population} Ekor`,
         },
         {
-          name: "total_pagi",
+          name: "produksi_pagi",
           th: "Total Produksi Pagi",
-          render: ({ totalProduksiPagi }) => {totalProduksiPagi} ,
+          render: ({ produksi_pagi }) => `${produksi_pagi} Liter`,
         },
         {
-          name: "total_sore",
+          name: "produksi_sore",
           th: "Total Produksi Sore",
-          render: ({ totalProduksiSore }) => {totalProduksiSore} ,
+          render: ({ produksi_sore }) => `${produksi_sore} Liter`,
         },
         {
-          name: "total_Harian",
+          name: "total",
           th: "Total Produksi Harian",
-          render: ({ totalProduksiHarian }) => {totalProduksiHarian},
+          render: ({ total }) => `${total} Liter`,
         },
       ],
     },
   }),
   computed: {
-    ...mapState(d$kawin, ["g$kawinList", "g$jantan", "g$betina"]),
-    ...mapState(d$dropdown, ["g$ddListBetina", "g$ddListPejantan", "g$ddKandang"]),
+    ...mapState(d$ternak, ["g$produksiSusuTotal", "g$exportExcel"]),
     modals() {
       return Object.values(this.modal).includes(true);
     },
@@ -78,27 +67,19 @@ export default {
     },
   },
   async mounted() {
-    await this.a$betinaList('').catch((error) =>
-      this.notify(error, false)
-    );
+    this.a$produksiSusuTotal().catch((error) => this.notify(error, false));
   },
   methods: {
-    ...mapActions(d$kawin, ["a$betinaList", "a$jantanList"]),
-    clearInput() {
-      this.input = {
-        id: null,
-      };
-    },
-    async triggerDetail(row) {
-        const { id_ternak } = row;
-        router.push({
-          name: "Detail Kawin",
-          params: {
-            id: id_ternak,
-          },
-        });
+    ...mapActions(d$ternak, ["a$produksiSusuTotal", "a$exportExcel"]),
+    clearInput() {},
+    async triggerExport() {
+      try {
+        this.a$exportExcel();
+      } catch (error) {}
     },
   },
+
+  ubahTanggal,
 };
 </script>
 
@@ -106,164 +87,32 @@ export default {
   <main-layout :title="pageTitle" disable-padding>
     <template #header>
       <nav class="nav nav-pills flex-column flex-sm-row mb-4">
-        <router-link to="data-produksi" class="nav-item">
+        <router-link to="../data-produksi" class="nav-item">
           <base-button type="success1" class="btn-lg text-white">
-          Daftar Produksi Susu
+            Daftar Produksi Susu
           </base-button>
-        <router-link to="data-produksi/grafik-produksi" class="nav-item">
-          <base-button type="secondary" class="btn-lg text-dark">
-          Grafik Produksi Susu
-          </base-button>
-        </router-link>
+          <router-link to="data-produksi/grafik-produksi" class="nav-item">
+            <base-button type="secondary" class="btn-lg text-dark">
+              Grafik Produksi Susu
+            </base-button>
+          </router-link>
         </router-link>
       </nav>
       <div class="row align-items-center">
         <div class="col-auto">
           <h3>Daftar {{ pageTitle }}</h3>
         </div>
+        <div class="col text-right">
+          <base-button type="success" @click="triggerExport">
+            <span>Export Excel</span>
+          </base-button>
+        </div>
       </div>
     </template>
 
     <template #body>
-      <empty-result v-if="!g$betina.length" :text="`${pageTitle}`" />
-      <data-table
-        v-else
-        :index="true"
-        :data="g$betina"
-        :columns="dt.column"
-        :actions="dt.action"
-        @list-kawin="triggerDetail"
-      />
-    </template>
-
-    <template #modal>
-      <!-- Tambah kawin -->
-      <modal-comp v-model:show="modal.addKawin" modal-classes="modal-md">
-        <template #header>
-          <h3 class="modal-title">Tambah {{ pageTitle }} Baru</h3>
-        </template>
-        <template #body>
-          <form-comp v-if="modal.addKawin" :validation-schema="schema">
-            <div class="row">
-              <div class="col-12">
-                <base-input
-                  name="tanggal_kawin"
-                  class=""
-                  placeholder="Pilih tanggal"
-                  label="Tanggal Kawin"
-                  required
-                >
-                  <flat-pickr
-                    v-model.lazy="input.tanggal_kawin"
-                    :config="{ mode: 'single', allowInput: true }"
-                    class="form-control datepicker"
-                    placeholder="Pilih Tanggal Kawin"
-                  />
-                </base-input>
-              </div>
-
-              <div class="col-12">
-                <base-input name="id_ternak" placeholder="ID Indukan" label="ID Indukan" required>
-                  <multi-select v-model="input.id_ternak" :options="g$kawinList" label="id_ternak" track-by="id_ternak" placeholder="Pilih/Masukan ID Indukan Betina" :show-labels="false" />
-                </base-input>
-              </div>
-              <!-- Input Pemacek -->
-              <div class="col-12">
-                <base-input name="id_ternak" placeholder="ID Pemacek" label="ID Pemacek" required>
-                  <multi-select v-model="input.id_ternak" :options="g$ddListPejantan" label="name" track-by="id" placeholder="Pilih/Masukan ID Indukan Pejantan" :show-labels="false" />
-                </base-input>
-              </div>
-              <!-- Input kode kandang -->
-              <div class="col-12">
-                <base-input name="id_kandang" placeholder="ID Kandang" label="ID Kandang" required>
-                  <multi-select v-model="input.id_kandang" :options="g$ddKandang" label="name" track-by="id" placeholder="Pilih/Masukan ID Kandang" :show-labels="false" />
-                </base-input>
-              </div>
-
-            </div>
-          </form-comp>
-        </template>
-        <template #footer>
-          <base-button type="secondary" @click="modal.addKawin = false">
-            Tutup
-          </base-button>
-          <base-button type="primary" @click="addKawin()">
-            Tambah {{ pageTitle }}
-          </base-button>
-        </template>
-      </modal-comp>
-
-      <!-- Ubah kawin -->
-      <modal-comp v-model:show="modal.ubahKawin" modal-classes="modal-lg">
-        <template #header>
-          <h3 class="modal-title">Detail {{ pageTitle }}</h3>
-        </template>
-        <template #body>
-          <form-comp v-if="modal.ubahKawin" :validation-schema="schema">
-            <div class="row">
-              <div class="col-12">
-                <base-input
-                  name="tanggal_kawin"
-                  class=""
-                  placeholder="Pilih tanggal"
-                  label="Tanggal Kawin"
-                  required
-                >
-                  <flat-pickr
-                    v-model.lazy="input.tanggal_kawin"
-                    :config="{ mode: 'single', allowInput: true }"
-                    class="form-control datepicker"
-                    placeholder="Pilih Tanggal Kawin"
-                  />
-                </base-input>
-              </div>
-              <div class="col-12">
-                <field-form
-                  v-slot="{ field }"
-                  v-model="input.id_pemacek"
-                  type="text"
-                  name="id_pemacek"
-                >
-                  <base-input
-                    v-bind="field"
-                    placeholder="Masukan ID Indukan Pejantan"
-                    label="ID Pemacek"
-                    required
-                  ></base-input>
-                </field-form>
-              </div>
-            </div>
-          </form-comp>
-        </template>
-        <template #footer>
-          <base-button type="secondary" @click="modal.ubahKawin = false">
-            Tutup
-          </base-button>
-          <base-button type="primary" @click="editKawin()">
-            Simpan Perubahan
-          </base-button>
-        </template>
-      </modal-comp>
-
-      <!-- Hapus kawin -->
-      <modal-comp v-model:show="modal.confirm" modal-classes="modal-lg">
-        <template #header>
-          <h3 class="modal-title">Hapus {{ pageTitle }}</h3>
-        </template>
-        <template #body>
-          <p>
-            Yakin ingin menghapus {{ pageTitle }}:
-            <strong>{{ input.id_ternak }}</strong>
-          </p>
-        </template>
-        <template #footer>
-          <base-button type="secondary" @click="modal.confirm = false">
-            Tutup
-          </base-button>
-          <base-button type="danger" @click="delKawin()">Hapus</base-button>
-        </template>
-      </modal-comp>
-
+      <empty-result v-if="!g$produksiSusuTotal.length" :text="`${pageTitle}`" />
+      <data-table v-else :index="true" :data="g$produksiSusuTotal" :columns="dt.column" />
     </template>
   </main-layout>
 </template>

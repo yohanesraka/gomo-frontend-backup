@@ -1,44 +1,59 @@
 <script>
 import { mapActions, mapState } from "pinia";
-import d$kawin from "@/stores/monitoring/kawin";
-import d$dropdown from "@/stores/dropdown";
+import d$produksiSusu from "@/stores/lembarkerja/proyeksisusu";
+import d$ternak from "@/stores/monitoring/ternak";
+import HcLine from "@/components/HighCharts/Line.vue";
+import { ubahTanggal } from "@/utils/locale/ubahTanggal";
 
-import { object as y$object, string as y$string, ref as y$ref } from "yup";
-import router from "../../../router";
+import {
+  object as y$object,
+  array as y$array,
+  string as y$string,
+  ref as y$ref,
+} from "yup";
 
 export default {
   metaInfo: () => ({
     title: "Proyeksi Produksi Susu",
   }),
+  components: {
+    HcLine,
+  },
   setup() {
-    const schema = y$object({});
+    const schema = y$object({
+      produksi_pagi: y$string().required().label("Produksi Pagi"),
+      produksi_sore: y$string().required().label("Produksi Sore"),
+      tanggal_produksi: y$string().required().label("Tanggal Produksi"),
+      kualitas: y$string().required().label("Kualitas"),
+    });
     return {
       schema,
     };
   },
+
   data: () => ({
-    pageTitle: "Proyeksi Produksi  Susu",
+    pageTitle: "Proyeksi Produksi Susu",
     // Input
     input: {
-      id_produksi_susu: null,
       id_ternak: null,
-      status:"",
-      produksi_pagi: "",
-      produksi_sore: "",
-      produksi_harian: "",
+      produksi_pagi: null,
+      produksi_sore: null,
+      tanggal_produksi: null,
+      kualitas: null,
     },
     // UI
     modal: {
-      addProduksi: false,
-      ubahProduksi: false,
-      confirm: false,
+      detailTernak: false,
+      addSusu: false,
     },
+    loading: false,
+    loadingModal: false,
     // DataTable
     dt: {
       column: [
         {
           name: "id_ternak",
-          th: "ID Ternak"
+          th: "ID Ternak",
         },
         {
           name: "bangsa",
@@ -46,35 +61,70 @@ export default {
           render: ({ bangsa }) => (bangsa ? bangsa.bangsa : null),
         },
         {
-          name: "status",
-          th: "Status",
-          render: ({ individuProduksiSore }) => {individuProduksiSore} ,
+          th: "Fase",
+          render: ({ fase }) => (fase ? fase.fase : null),
         },
         {
-          name: "produksi_harian",
-          th: "Produksi Harian",
-          render: ({ individuProduksiHarian }) => {individuProduksiHarian},
+          name: "status_perah",
+          th: "Status Perah",
         },
-        {
-          name: "rata_produksi",
-          th: "Rata-rata Produksi",
-          render: ({rata_produksi}) => {rata_produksi},
-        }, 
       ],
       action: [
         {
           text: "Grafik",
           color: "info",
-          event: "grafik-produksi",
-        }
+          event: "grafik-susu",
+        },
+        {
+          text: "Tambah",
+          color: "success",
+          event: "tambah-susu",
+        },
       ],
     },
+
+    dt2: {
+      column: [
+        {
+          name: "tanggal_produksi",
+          th: "Tanggal Produksi",
+          render: ({ tanggal_produksi }) => `${ubahTanggal(tanggal_produksi)}`,
+        },
+        {
+          name: "produksi_pagi",
+          th: "Produksi Pagi",
+        },
+        {
+          name: "produksi_sore",
+          th: "Produksi Sore",
+        },
+        {
+          name: "total_harian",
+          th: "Total harian",
+        },
+        {
+          name: "kualitas",
+          th: "Kualitas",
+        },
+      ],
+    },
+    infoTernak: {},
   }),
   computed: {
-    ...mapState(d$kawin, ["g$produksiList", "g$betina"]),
-    ...mapState(d$dropdown, ["g$ddListBetina", "g$ddListPejantan", "g$ddKandang"]),
+    ...mapState(d$ternak, [
+      "g$ternakList",
+      "g$produksiSusu",
+      "g$perlakuan",
+      "g$produksiSusuTabel",
+      "g$statusTernak",
+    ]),
     modals() {
       return Object.values(this.modal).includes(true);
+    },
+    filteredTernakList() {
+      return this.g$ternakList.filter(
+        (infoTernak) => infoTernak.status_ternak.status_ternak === "Indukan"
+      );
     },
   },
   watch: {
@@ -85,20 +135,77 @@ export default {
     },
   },
   async mounted() {
-    await this.a$betinaList('').catch((error) =>
-      this.notify(error, false)
-    );
+    this.a$ternakList().catch((error) => this.notify(error, false));
   },
   methods: {
-    async triggerDetail(row) {
-        const { id_ternak } = row;
-        router.push({
-          name: "Grafik Proyeksi Susu",
-          params: {
-            id: id_ternak,
-          },
-        });
+    ...mapActions(d$ternak, [
+      "a$ternakList",
+      "a$perlakuan",
+      "a$statusTernak",
+      "a$produksiSusuTabel",
+      "a$produksiSusuAdd",
+    ]),
+    clearInput() {
+      this.input = {
+        id_ternak: null,
+        produksi_pagi: null,
+        produksi_sore: null,
+        tanggal_produksi: null,
+        kualitas: null,
+      };
     },
+    async addSusu() {
+      this.loading = true;
+      try {
+        const {
+          id_ternak,
+          produksi_pagi,
+          produksi_sore,
+          tanggal_produksi,
+          kualitas,
+        } = this.input;
+        const data = {
+          id_ternak,
+          produksi_pagi,
+          produksi_sore,
+          tanggal_produksi,
+          kualitas,
+        };
+        await this.schema.validate(data);
+        const tambahSusu = await this.a$produksiSusuAdd(data);
+        this.modal.addSusu = false;
+        this.notify(
+          `Produksi Susu Ternak dengan ID ${tambahSusu.id_ternak} berhasil ditambahkan`
+        );
+      } catch (error) {
+        this.notify(error, false);
+      } finally {
+        this.a$produksiSusuTabel();
+      }
+      this.loading = false;
+    },
+    async triggerAddSusu(row) {
+      this.modal.addSusu = true;
+      const { id_ternak, produksi_pagi, produksi_sore, tanggal_produksi, kualitas } = row;
+      this.input = {
+        id_ternak,
+        produksi_pagi,
+        produksi_sore,
+        tanggal_produksi,
+        kualitas,
+      };
+      this.loadingModal = false;
+    },
+    async triggerDetail(row) {
+      try {
+        this.infoTernak = { ...row };
+        this.modal.detailTernak = true;
+        console.log(this.infoTernak.id_ternak);
+        this.a$produksiSusuTabel(this.infoTernak.id_ternak);
+        this.loadingModal = false;
+      } catch (error) {}
+    },
+    ubahTanggal,
   },
 };
 </script>
@@ -114,145 +221,152 @@ export default {
     </template>
 
     <template #body>
-      <empty-result v-if="!g$betina.length" :text="`${pageTitle}`" />
+      <empty-result v-if="!filteredTernakList.length" :text="`${pageTitle}`" />
       <data-table
         v-else
         :index="true"
-        :data="g$betina"
+        :data="filteredTernakList"
         :columns="dt.column"
         :actions="dt.action"
-        @grafik-produksi="triggerDetail"
+        @grafik-susu="triggerDetail"
+        @tambah-susu="triggerAddSusu"
       />
     </template>
 
     <template #modal>
-      <!-- Tambah kawin -->
-      <modal-comp v-model:show="modal.addKawin" modal-classes="modal-md">
+      <!-- Modal Detail Ternak -->
+      <modal-comp v-model:show="modal.detailTernak" modal-classes="modal-md">
         <template #header>
-          <h3 class="modal-title">Tambah {{ pageTitle }} Baru</h3>
+          <div v-if="loadingModal">
+            <i class="fa fa-spinner fa-spin"></i> Sedang memuat...
+          </div>
+          <div v-else>
+            <h3 class="modal-title">
+              Grafik Produksi Susu Ternak Nomor {{ infoTernak.id_ternak }}
+            </h3>
+          </div>
         </template>
-        <template #body>
-          <form-comp v-if="modal.addKawin" :validation-schema="schema">
-            <div class="row">
-              <div class="col-12">
-                <base-input
-                  name="tanggal_kawin"
-                  class=""
-                  placeholder="Pilih tanggal"
-                  label="Tanggal Kawin"
-                  required
-                >
-                  <flat-pickr
-                    v-model.lazy="input.tanggal_kawin"
-                    :config="{ mode: 'single', allowInput: true }"
-                    class="form-control datepicker"
-                    placeholder="Pilih Tanggal Kawin"
-                  />
-                </base-input>
-              </div>
-
-              <div class="col-12">
-                <base-input name="id_ternak" placeholder="ID Indukan" label="ID Indukan" required>
-                  <multi-select v-model="input.id_ternak" :options="g$kawinList" label="id_ternak" track-by="id_ternak" placeholder="Pilih/Masukan ID Indukan Betina" :show-labels="false" />
-                </base-input>
-              </div>
-              <!-- Input Pemacek -->
-              <div class="col-12">
-                <base-input name="id_ternak" placeholder="ID Pemacek" label="ID Pemacek" required>
-                  <multi-select v-model="input.id_ternak" :options="g$ddListPejantan" label="name" track-by="id" placeholder="Pilih/Masukan ID Indukan Pejantan" :show-labels="false" />
-                </base-input>
-              </div>
-              <!-- Input kode kandang -->
-              <div class="col-12">
-                <base-input name="id_kandang" placeholder="ID Kandang" label="ID Kandang" required>
-                  <multi-select v-model="input.id_kandang" :options="g$ddKandang" label="name" track-by="id" placeholder="Pilih/Masukan ID Kandang" :show-labels="false" />
-                </base-input>
-              </div>
-
-            </div>
-          </form-comp>
-        </template>
-        <template #footer>
-          <base-button type="secondary" @click="modal.addKawin = false">
-            Tutup
-          </base-button>
-          <base-button type="primary" @click="addKawin()">
-            Tambah {{ pageTitle }}
-          </base-button>
+        <template v-if="modal.detailTernak" #body>
+          <tabs>
+            <tab-pane title="Tabel">
+              <template v-if="g$produksiSusuTabel.length > 0">
+                <data-table
+                  :index="true"
+                  :data="g$produksiSusuTabel"
+                  :columns="dt2.column"
+                />
+              </template>
+              <template v-else>
+                <empty-result :text="'Tabel ' + pageTitle" />
+              </template>
+            </tab-pane>
+            <tab-pane title="Grafik">
+              <h3 class="my-4">Grafik Produksi Susu</h3>
+              <hc-line
+                :height="250"
+                :data="g$produksiSusu"
+                :data-labels="true"
+                :legend="true"
+              />
+            </tab-pane>
+          </tabs>
         </template>
       </modal-comp>
 
-      <!-- Ubah kawin -->
-      <modal-comp v-model:show="modal.ubahKawin" modal-classes="modal-lg">
+      <modal-comp v-model:show="modal.addSusu" modal-classes="modal-md">
         <template #header>
-          <h3 class="modal-title">Detail {{ pageTitle }}</h3>
+          <h3 class="modal-title">Detail {{ pageTitle }} Nomor {{ input.id_ternak }}</h3>
         </template>
         <template #body>
-          <form-comp v-if="modal.ubahKawin" :validation-schema="schema">
-            <div class="row">
-              <div class="col-12">
-                <base-input
-                  name="tanggal_kawin"
-                  class=""
-                  placeholder="Pilih tanggal"
-                  label="Tanggal Kawin"
-                  required
-                >
-                  <flat-pickr
-                    v-model.lazy="input.tanggal_kawin"
-                    :config="{ mode: 'single', allowInput: true }"
-                    class="form-control datepicker"
-                    placeholder="Pilih Tanggal Kawin"
-                  />
-                </base-input>
+          <div v-if="loadingModal">
+            <i class="fa fa-spinner fa-spin"></i> Sedang memuat...
+          </div>
+          <div v-else>
+            <form-comp v-if="modal.addSusu" :validation-schema="schema">
+              <div class="row">
+                <!-- Produksi Pagi -->
+                <div class="col-12">
+                  <field-form
+                    v-slot="{ field }"
+                    v-model="input.produksi_pagi"
+                    name="produksi_pagi"
+                  >
+                    <base-input
+                      v-bind="field"
+                      placeholder="Masukan Banyak Produksi Pagi (Mililiter)"
+                      label="Produksi Pagi"
+                      type="number"
+                      required
+                    ></base-input>
+                  </field-form>
+                </div>
+
+                <!-- Produksi Sore -->
+                <div class="col-12">
+                  <field-form
+                    v-slot="{ field }"
+                    v-model="input.produksi_sore"
+                    name="produksi_sore"
+                  >
+                    <base-input
+                      v-bind="field"
+                      placeholder="Masukan Banyak Produksi Sore (Mililiter)"
+                      label="Produksi Sore"
+                      type="number"
+                      required
+                    ></base-input>
+                  </field-form>
+                </div>
+
+                <!-- Tanggal Produksi -->
+                <div class="col-12">
+                  <base-input name="tanggal_produksi" label="Tanggal Produksi">
+                    <flat-pickr
+                      v-model.lazy="input.tanggal_produksi"
+                      :config="{
+                        mode: 'single',
+                        allowInput: true,
+                        maxDate: new Date(),
+                      }"
+                      class="form-control datepicker"
+                      placeholder="Pilih Tanggal"
+                    />
+                  </base-input>
+                </div>
+
+                <!-- Kualitas -->
+                <div class="col-12">
+                  <field-form
+                    v-slot="{ field }"
+                    v-model="input.kualitas"
+                    type="text"
+                    name="kualitas"
+                  >
+                    <base-input
+                      v-bind="field"
+                      placeholder="0 - 100"
+                      label="Kualitas"
+                      required
+                    >
+                    </base-input>
+                  </field-form>
+                </div>
               </div>
-              <div class="col-12">
-                <field-form
-                  v-slot="{ field }"
-                  v-model="input.id_pemacek"
-                  type="text"
-                  name="id_pemacek"
-                >
-                  <base-input
-                    v-bind="field"
-                    placeholder="Masukan ID Indukan Pejantan"
-                    label="ID Pemacek"
-                    required
-                  ></base-input>
-                </field-form>
-              </div>
-            </div>
-          </form-comp>
+            </form-comp>
+          </div>
         </template>
         <template #footer>
-          <base-button type="secondary" @click="modal.ubahKawin = false">
+          <base-button type="secondary" @click="modal.addSusu = false">
             Tutup
           </base-button>
-          <base-button type="primary" @click="editKawin()">
-            Simpan Perubahan
+          <base-button type="primary" @click="addSusu()">
+            <span v-if="!loading">Tambah {{ pageTitle }}</span>
+            <span v-else>
+              <i class="fa fa-spinner fa-spin"></i> Sedang menambahkan...
+            </span>
           </base-button>
         </template>
       </modal-comp>
-
-      <!-- Hapus kawin -->
-      <modal-comp v-model:show="modal.confirm" modal-classes="modal-lg">
-        <template #header>
-          <h3 class="modal-title">Hapus {{ pageTitle }}</h3>
-        </template>
-        <template #body>
-          <p>
-            Yakin ingin menghapus {{ pageTitle }}:
-            <strong>{{ input.id_ternak }}</strong>
-          </p>
-        </template>
-        <template #footer>
-          <base-button type="secondary" @click="modal.confirm = false">
-            Tutup
-          </base-button>
-          <base-button type="danger" @click="delKawin()">Hapus</base-button>
-        </template>
-      </modal-comp>
-
     </template>
   </main-layout>
 </template>

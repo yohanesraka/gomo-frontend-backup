@@ -10,6 +10,7 @@ const u$dropdown = defineStore({
   state: () => ({
     jenisKelamin: ["Jantan", "Betina"],
     statusSehat: ["Sehat", "Sakit"],
+    statusPerah: ["Perah", "Tidak"],
     statusKeluar: ["Jual", "Mati", "Sembelih"],
     satuanPakan: ["Kg", "Pcs"],
     keteranganDetailPakan: ["Masuk", "Keluar"],
@@ -188,6 +189,7 @@ const u$dropdown = defineStore({
     g$ddJenisKelamin: (state) => state.jenisKelamin,
     g$ddJenisHarga: (state) => state.jenisHarga,
     g$ddStatusSehat: (state) => state.statusSehat,
+    g$ddStatusPerah: (state) => state.statusPerah,
     g$ddStatusKeluar: (state) => state.statusKeluar,
     g$ddSatuanPakan: (state) => state.satuanPakan,
     g$ddKeteranganDetailPakan: (state) => state.keteranganDetailPakan,
