@@ -17,6 +17,7 @@ const u$ternak = defineStore({
     perlakuan: [],
     timbangan: [],
     susu:[],
+    prediksi:[],
     exports:[]
     
   }),
@@ -114,6 +115,18 @@ const u$ternak = defineStore({
       }
     },
 
+    async a$prediksiSusuTabel(req) {
+      try {
+        const { data } = await s$ternak.listPrediksi(req);
+        console.log(data);
+        this.prediksi = data.data;
+        console.log(this.prediksi)
+      } catch ({ error }) {
+        this.prediksi = [];
+        throw error;
+      }
+    },
+
     async a$produksiSusuTabel(req) {
       try {
         const { data } = await s$ternak.listSusu(req);
@@ -144,9 +157,26 @@ const u$ternak = defineStore({
         throw error;
       }
     },
+    async a$prediksiSusuLiterasi(req) {
+      try {
+        const tambahLiterasi = await s$ternak.addDeltaPrediksi(req);
+        return tambahLiterasi.data;
+      } catch ({ error }) {
+        throw error;
+      }
+    },
+    async a$prediksiSusuTarget(req) {
+      try {
+        const tambahTarget = await s$ternak.addTargetPeternak(req);
+        return tambahTarget.data;
+      } catch ({ error }) {
+        throw error;
+      }
+    },
   },
   getters: {
     g$exportExcel:(state) => state.exports,
+    g$prediksiSusuTabel:(state) => state.prediksi,
     g$produksiSusuTotal:(state) => state.susu,
     g$produksiSusuTabel: (state) => state.produksi,
     g$ternakList: (state) => state.ternak,
@@ -200,6 +230,26 @@ const u$ternak = defineStore({
         },
       ],
       length: state.susu.length,
+    }),
+    g$prediksiSusuGrafik: (state) => ({
+      categories: state.prediksi.map(({ tanggal }) =>
+      ubahTanggal(tanggal)
+      ),
+      series: [
+        {
+          name: "Prediksi Literasi",
+          backgroundColor: "rgb(255, 99, 132)",
+          borderColor: "rgb(255, 99, 132)",
+          data: state.prediksi.map(({data_literasi}) => data_literasi),
+        },
+        {
+          name: "Target Peternak",
+          backgroundColor: "rgb(99, 99, 132)",
+          borderColor: "rgb(99, 99, 132)",
+          data: state.prediksi.map(({data_prediksi}) => data_prediksi),
+        },
+      ],
+      length: state.prediksi.length,
     }),
     g$produksiSusuTotalTabelBulanan: (state) => {
       const monthlyData = state.susu.reduce((result, data) => {

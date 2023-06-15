@@ -107,6 +107,12 @@ const dashboardRoutes = [
         meta: { requiresAuth: true },
       },
       {
+        path: "data-produksi/prediksi",
+        name: "Data Prediksi Susu",
+        component: () => import("@/views/Dashboard/Monitoring/ProduksiGrafikPrediksi.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
         path: "data-produksi/grafik-produksi",
         name: "Grafik Produksi Susu",
         component: () => import("@/views/Dashboard/Monitoring/ProduksiGrafikPage.vue"),

@@ -116,6 +116,7 @@ export default {
       "g$produksiSusu",
       "g$perlakuan",
       "g$produksiSusuTabel",
+      "g$prediksiSusuGrafik",
       "g$statusTernak",
     ]),
     modals() {
@@ -136,6 +137,7 @@ export default {
   },
   async mounted() {
     this.a$ternakList().catch((error) => this.notify(error, false));
+    this.a$prediksiSusuTabel().catch((error) => this.notify(error, false));
   },
   methods: {
     ...mapActions(d$ternak, [
@@ -144,6 +146,7 @@ export default {
       "a$statusTernak",
       "a$produksiSusuTabel",
       "a$produksiSusuAdd",
+      "a$prediksiSusuTabel",
     ]),
     clearInput() {
       this.input = {
@@ -185,6 +188,7 @@ export default {
       this.loading = false;
     },
     async triggerAddSusu(row) {
+      this.loadingModal = true;
       this.modal.addSusu = true;
       const { id_ternak, produksi_pagi, produksi_sore, tanggal_produksi, kualitas } = row;
       this.input = {
@@ -198,9 +202,11 @@ export default {
     },
     async triggerDetail(row) {
       try {
+        this.loadingModal = true;
         this.infoTernak = { ...row };
         this.modal.detailTernak = true;
         console.log(this.infoTernak.id_ternak);
+        this.a$prediksiSusuTabel();
         this.a$produksiSusuTabel(this.infoTernak.id_ternak);
         this.loadingModal = false;
       } catch (error) {}
@@ -265,6 +271,15 @@ export default {
               <hc-line
                 :height="250"
                 :data="g$produksiSusu"
+                :data-labels="true"
+                :legend="true"
+              />
+            </tab-pane>
+            <tab-pane title="Grafik Prediksi">
+              <h3 class="my-4">Grafik Prediksi Susu</h3>
+              <hc-line
+                :height="250"
+                :data="g$prediksiSusuGrafik"
                 :data-labels="true"
                 :legend="true"
               />

@@ -20,6 +20,7 @@ const subApiUrl = {
   total: "total",
   timbangan: "timbangan",
   produksi: "produksi-susu",
+  prediksi: "prediksi-susu",
   exports: "export-to-excel",
 };
 

@@ -98,6 +98,13 @@ export default {
               </router-link>
             </span>
             <span class="text-center m-2">
+              <router-link to="prediksi">
+                <base-button type="secondary" class="btn-lg text-dark">
+                  Data Prediksi
+                </base-button>
+              </router-link>
+            </span>
+            <span class="text-center m-2">
               <router-link to="grafik-produksi">
                 <base-button type="secondary" class="btn-lg text-dark">
                   Harian

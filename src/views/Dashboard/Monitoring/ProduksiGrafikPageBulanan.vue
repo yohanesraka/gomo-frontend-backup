@@ -92,8 +92,15 @@ export default {
             </span>
             <span class="text-center m-2">
               <router-link to="grafik-produksi">
-                <base-button type="success1" class="btn-lg text-white">
+                <base-button type="secondary" class="btn-lg text-dark">
                   {{ pageTitle }}
+                </base-button>
+              </router-link>
+            </span>
+            <span class="text-center m-2">
+              <router-link to="prediksi">
+                <base-button type="secondary" class="btn-lg text-dark">
+                  Data Prediksi
                 </base-button>
               </router-link>
             </span>
@@ -106,7 +113,7 @@ export default {
             </span>
             <span class="text-center m-2">
               <router-link to="grafik-bulanan">
-                <base-button type="secondary" class="btn-lg text-dark">
+                <base-button type="success1" class="btn-lg text-white">
                   Bulanan (Periode)
                 </base-button>
               </router-link>
